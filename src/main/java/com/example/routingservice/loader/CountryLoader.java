@@ -1,22 +1,23 @@
 package com.example.routingservice.loader;
 
+import com.example.routingservice.model.Country;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.routingservice.model.Country;
-import org.springframework.stereotype.Component;
-
 import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Component
 public class CountryLoader {
 
-    private final Map<String, List<String>> adjacencyMap = new HashMap<>();
+    // REVERTED: Store the simplified Adjacency Map (CCA3 -> [Borders])
+    private Map<String, List<String>> adjacencyMap = new HashMap<>();
 
+    // REVERTED: Getter name matches the new RoutingService constructor
     public Map<String, List<String>> getAdjacencyMap() {
         return adjacencyMap;
     }
@@ -27,9 +28,19 @@ public class CountryLoader {
             ObjectMapper mapper = new ObjectMapper();
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("countries.json");
 
-            List<Country> countries = mapper.readValue(inputStream, new TypeReference<>() {});
+            if (inputStream == null) {
+                // In a production environment, this should point to the correct source,
+                // but this assumes local loading for simplicity.
+                throw new RuntimeException("Could not find countries.json in classpath (src/main/resources)");
+            }
+
+            List<Country> countries = mapper.readValue(inputStream, new TypeReference<List<Country>>() {});
+
+            // BUILD THE ADJACENCY MAP: map cca3 to its list of borders
             for (Country country : countries) {
-                adjacencyMap.put(country.getCca3(), country.getBorders());
+                // Ensure no null lists are stored, use empty list if borders is null
+                List<String> borders = country.getBorders() != null ? country.getBorders() : Collections.emptyList();
+                adjacencyMap.put(country.getCca3(), borders);
             }
 
             System.out.println("Loaded " + adjacencyMap.size() + " countries.");
