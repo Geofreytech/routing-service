@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*; // Contains @RestController, @
 import java.util.List;
 import java.util.Map;
 
-@RestController // <-- ADDED THIS CRITICAL ANNOTATION
+@RestController
 @RequestMapping("/routing")
 public class RoutingController {
 

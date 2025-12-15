@@ -24,10 +24,10 @@ public class RoutingService {
         this.graph = loader.getAdjacencyMap();
     }
 
-    // New version throws an exception instead of returning null
+
     public List<String> findLandRoute(String origin, String destination) {
 
-        // 1. Validate input (Note: This could also be a different exception/error)
+
         if (!graph.containsKey(origin) || !graph.containsKey(destination)) {
             // Throw a specific error for invalid country codes
             throw new NoRouteFoundException("Invalid country code(s) provided.");

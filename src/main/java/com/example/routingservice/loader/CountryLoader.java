@@ -29,8 +29,7 @@ public class CountryLoader {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("countries.json");
 
             if (inputStream == null) {
-                // In a production environment, this should point to the correct source,
-                // but this assumes local loading for simplicity.
+
                 throw new RuntimeException("Could not find countries.json in classpath (src/main/resources)");
             }
 
